@@ -1,0 +1,315 @@
+<!DOCTYPE >
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title></title>
+</head>
+<body>
+<button type="button" id="button">计算结果</button>
+<script type="text/javascript">
+    var totalNum = 50, // 种群中染色体的总数
+        width=20,//毛坯的宽
+        length=30,//毛坯的长
+        N,//记录需要的毛坯数量
+        bit = 20, // 基因数为20位
+        total = new Array(); // 种群中的染色体
+    bestFitness = 0, // 最佳适应值
+        generation = 0, // 染色体代号
+        bestGeneration = 0, // 最好的一旦染色体代号
+        bestStr = ''; // 最好的染色体基因序列
+    var size=[];//记录小矩形块的长宽
+    var num=[4,3,5,3,5];//记录小矩形块的需求数量
+    size[0]=[7,5];
+    size[1]=[10,5];
+    size[2]=[12,7];
+    size[3]=[10,8];
+    size[4]=[12,10];
+    var sizeTotal=[];
+    /*将基因组对应的小矩形块的长宽记录下来*/
+    for(var i=0;i<4;i++){
+        sizeTotal[i]=size[0];
+    }
+    for(var i=4;i<7;i++){
+        sizeTotal[i]=size[1];
+    }
+    for(var i=7;i<12;i++){
+        sizeTotal[i]=size[2];
+    }
+    for(var i=12;i<15;i++){
+        sizeTotal[i]=size[3];
+    }
+    for(var i=15;i<20;i++){
+        sizeTotal[i]=size[4];
+    }
+
+    /*初始化一条染色体*/
+    function initChar() {
+        var arr = [];
+        for(var i=0;i<bit;i++){
+            getx(arr);
+        }
+        function getx(arr){
+            for(var i=0;i>-1;i++){
+                var flag = true;
+                var num = Math.floor(Math.random()*20);
+                for(var i in arr){
+                    if(arr[i] == num){
+                        flag= false;
+                        break;
+                    }
+                }
+                if(flag == true){
+                    arr.push(num);
+                    return;
+                }
+            }
+        }return arr;
+    }
+
+    /*初始化一个种群*/
+    function initTotal() {
+        for(var i=0;i<totalNum;i++){
+            total[i] = initChar()
+        }
+        return total;
+    }
+
+    /*找出数组中的最大值*/
+    function findMax(tmp){
+        var max = tmp[0];
+        for(var i=1;i<tmp.length;i++){
+            if(max<=tmp[i]){
+                max=tmp[i];
+            }
+        }return max;
+    }
+
+    /*找出数组中的最小值*/
+    function findMin(tmp){
+        var min=tmp[0];
+        var index=0;
+        for(var i=1;i<tmp.length;i++){
+            if(min>tmp[i]){
+                min=tmp[i];
+                index=i;
+            }
+        }
+        return min;
+    }
+
+    /*找出数组中最小值的index*/
+    function findMaxIndex(tmp){
+        var max=tmp[0];
+        var index=0;
+        for(var i=1;i<tmp.length;i++){
+            if(max<tmp[i]){
+                max=tmp[i];
+                index=i;
+            }
+        }
+        return index;
+    }
+
+    /*计算适应度函数（也是直接计算需要的矩形块数量）*/
+    function calculateFitness(arr) {
+        var neededNum=1;
+        var newArr=[];//记录每一行的矩形块的宽
+        var addLenght=0;//累计长
+        var remLength=0;//剩余长
+        var fitness=0;
+        var n=0;//累计在出现addLenght>length的情况时i循环的次数的个数
+        var neededNum=0;
+        var index1,index2;
+        var count=0;//记录是否出现每行的remLenth还能再放一个矩形块的情况
+        for(var i=0;i<arr.length;i++){
+            addLenght+=sizeTotal[arr[i]][0];
+            n++;
+            if(addLenght>length){
+
+                if(i<n){
+                    for(var j=0;j<i;j++){
+                        newArr[j]=sizeTotal[arr[j]][1];
+                    }
+                }else{
+                    for(var j=0;j<i;j++){
+                        newArr[j]=sizeTotal[arr[j]][1];
+                    }
+                    for(var a=0;a<i-n;a++){
+                        newArr.shift();
+                    }
+                }
+                remLength=length+sizeTotal[arr[i]][0]-addLenght;
+                if(remLength>5){
+                    outerMost://定义外层循环
+                        for(var m=i;m<arr.length;m++){
+                            for(var h=0;h<2;h++){
+                                if( sizeTotal[arr[m]][h] <= remLength){
+                                    index1=m;
+                                    index2=h;
+                                    count=1;
+                                    if(index2==0){
+                                        newArr.push(sizeTotal[arr[index1]][1]);
+                                    }else{
+                                        newArr.push(sizeTotal[arr[index1]][0]);
+                                    }
+                                    if(index1!=i){
+                                        arr.splice(i,0,arr[index1]);
+                                        arr.splice(index1+1,1);
+                                    }
+                                    if(i<arr.length-1){
+                                        i++;
+                                    }
+
+                                    break outerMost;//终止外层循环
+                                }
+                            }
+                        }
+                }
+                fitness+=findMax(newArr);
+                addLenght=sizeTotal[arr[i]][0];
+                n=0;
+            }
+            var newArrRest=[];//储存排在最后一行的矩形块的宽
+            if(i==arr.length-1){
+                if(count==0){
+                    for(var z=0;z<arr.length;z++){
+                        newArrRest[z]=sizeTotal[arr[z]][1];
+                    }
+                    for(var b=0;b<i-n;b++){
+                        newArrRest.shift();
+                    }
+                    fitness+=findMax(newArrRest);
+                }else{
+                    for(var z=0;z<arr.length;z++){
+                        newArrRest[z]=sizeTotal[arr[z]][1];
+                    }
+                    for(var b=0;b<i-n-1;b++){
+                        newArrRest.shift();
+                    }
+                    fitness+=findMax(newArrRest);
+                }
+            }
+            if(fitness>width){
+                neededNum++;
+                fitness=findMax(newArr);
+            }
+            count=0;
+        }
+        return 1/neededNum;
+    }
+
+    /*轮盘赌选择*/
+    function select() {
+        var evals = new Array(totalNum); // 所有染色体适应值
+        var p = new Array(totalNum); // 各染色体选择概率
+        var q = new Array(totalNum); // 累计概率
+        var F = 0; // 累计适应值总合
+        for(var i=0;i<totalNum;i++){ // 记录下种群的最优解
+            evals[i] = calculateFitness(total[i]);
+            if(evals[i] > bestFitness) {
+                bestFitness = evals[i];
+                bestStr = total[i];
+            }
+            F += evals[i];
+        }
+        for(var j=0;j<totalNum;j++){ // 计算累计概率
+            p[j] = evals[j]/F;
+            if(j == 0){
+                q[j] = p[j];
+            }
+            else{
+                q[j]=q[j-1]+p[j];
+            }
+        }
+        var temp = new Array(totalNum);
+        for(var k=0;k<totalNum;k++){ //
+            var r = Math.random();
+            if(r <= q[0]){
+                temp = total[0];
+                break;
+            }
+            else{
+                for(var z=1;z<totalNum;z++){
+                    if(r<q[z]){
+                        temp = total[z];
+                        break;
+                    }
+                }
+            }
+        }
+        return temp;
+    }
+
+
+
+    /*染色体交叉
+     *交叉概率为70%
+     */
+    function jiaocha(population1,population2){
+        var returnPopulation1 = new Array(bit);
+        var returnPopulation2 = new Array(bit);
+        var temp=Math.random();
+        if(temp<0.7){
+            for(var i=0;i<bit;i++){
+                if(i<bit-2){
+                    returnPopulation1[i]=population1[i];
+                    returnPopulation2[i]=population2[i];
+                }else{
+                    returnPopulation1[i]=population2[i];
+                    returnPopulation2[i]=population1[i];
+                }
+            }
+            //找出重合的基因,并将相同基因改正
+            for(var j=bit-1;j>bit-3;j--){
+                for(var k=0;k<bit-2;k++){
+                    if(returnPopulation1[k]==returnPopulation1[j]){
+                        returnPopulation1[k]=returnPopulation2[j];
+                    }
+                }
+            }
+        }else{
+            returnPopulation1=population1;
+            returnPopulation2=population2;
+        }
+        return returnPopulation1;
+    }
+
+    /*染色体变异*/
+    function change(arr) {
+        if(Math.random()<0.1){
+            while(1){
+                var temp1=parseInt(Math.random()*20);
+                var temp2=parseInt(Math.random()*20);
+                if(temp1!=temp2){
+                    break;
+                }
+            }
+            var temp=arr[temp1];
+            arr[temp1]=arr[temp2];
+            arr[temp2]=temp;
+        }
+        return arr;
+    }
+
+
+    /*执行过程*/
+    var d1 = new Date();
+    document.getElementById('button').onclick = function () {
+        total = initTotal();
+        var arr=[];
+        var bestArr=[];
+        for(var i=0;i<1000;i++){
+            bestArr[i]=change(jiaocha(select(),select()));
+            arr[i] = calculateFitness(bestArr[i]);
+        }
+        //var minFitness=findMin(arr);
+        bestStr=bestArr[findMaxIndex(arr)];
+        //console.log(bestStr);
+        console.log(1/calculateFitness(bestStr));
+        var d2 = new Date();
+        //var time=d2-d1;
+        //console.log('一共执行了'+time+'ms');
+    }
+</script>
+</body>
+</html>

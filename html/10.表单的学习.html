@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表单的学习</title>
+</head>
+<body>
+
+<h1>注册信息</h1>
+
+<!--
+form 表单的学习
+ action：表单提交的位置 可以是网站，也可以是网络地址
+ method ：get post 提交的一种方式
+        get：能看见填写的信息 不安全
+        post ：能隐藏填写的信息 比较安全且可以传输大文件
+-->
+
+<form action="2.网页基本标签.html" method="get">
+    <!--input：
+
+    type：指元素的类型
+     text：表示默认
+     password ：表示密码的输入后的形态  例如：****
+    name中：表示该文本框代表什么 养成习惯
+
+     value="2020"  文本框初始值
+      maxlength="8" 可输入的最大字符
+       size="20"  文本框的大小
+       -->
+        <p>名字<input type="text" name="username" placeholder="请输入用户名" required ></p>
+        <p>密码<input type="password" name="pwd" hidden></p>
+
+    <p>性别
+        <!--单选框标签：
+
+        input type="radio"
+        必须要有value：表示单选框的值
+        name：表示组 一样时，表示同一个组
+
+        -->
+        <input type="radio" value="boy" name="sex"/>男
+        <input type="radio" value="girl" name="sex"/>女
+
+    </p>
+
+    <p>
+        <!--多选框标签
+        input type="checkbox"
+                -->
+        <input type="checkbox" name="hobby" value="sleep"/>睡觉
+        <input type="checkbox" name="hobby" value="game"/>打游戏
+        <input type="checkbox" name="hobby" value="code"/>写代码
+        <input type="checkbox" name="hobby" value="chat"/>聊天
+    </p>
+
+    <p>
+        <!--文件域
+
+        -->
+        <input type="file" name="files"/>
+        <input type="button" name="upload" value="上传">
+    </p>
+    <p>
+        <!--按钮
+
+        -->
+        <input type="button" name="btn" value="点击"/>
+
+        <!--可以跳转到界面-->
+        <!--<input type="image" src="../resources/image/1.jpg">-->
+    </p>
+
+
+    <p>
+        <!--下拉框
+        <select name="">
+        -->
+        国家：<select name="国家">
+        <option value="china">中国</option>
+        <option value="US">美国</option>
+        <option value="English">英国</option>
+        <option value="yin">印度</option>
+
+    </select>
+
+    </p>
+
+    <!--文本域
+     <textarea name="textarea"
+    -->
+    <p>反馈
+        <textarea name="textarea" id="" cols="30" rows="10">文本内容</textarea>
+    </p>
+
+    <p>
+
+        <!--submit 提交-->
+        <input type="submit" name="提交" >
+        <!--reset 重置-->
+        <input type="reset" name="重置">
+    </p>
+
+    <p>
+        <label for="mark">金额：</label>
+        <input type="text" id="mark">
+    </p>
+
+    <!--邮箱验证-->
+    邮箱：
+    <p>
+        <input type="email" name="email" required>
+    </p>
+
+    <!--URL-->
+    URL：
+    <p>
+    <input type="url" name="url" required>
+    </p>
+
+    <!--数字验证-->
+    商品数量:
+    <p>
+        <input type="number" name="num" min="0" max="100" step="10" required>
+    </p>
+    <!--滑块
+    <input type="range"
+    -->
+    音量：
+    <p>
+        <input type="range" name="voice" min="0" max="100" step="1">
+    </p>
+    <!--搜索框-->
+    <p>
+        搜索：
+        <input type="search" name="search">
+    </p>
+
+    <p>
+        Email：
+        <input type="text" name="diy email" pattern="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$">
+    </p>
+<!--表单的应用
+
+隐藏域：hidden
+只读：readonly
+禁用：disabled
+-->
+    <!--表单的初级验证
+    placeholder 提示信息
+    required 非空判断
+    pattern 正则表达式
+
+    -->
+
+</form>
+
+</body>
+</html>
